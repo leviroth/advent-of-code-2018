@@ -3,14 +3,13 @@ open! Import
 
 let date = 1
 
-module Input = struct
-  type input = int list
-  let parse file =
-    Sexp.load_sexps_conv_exn file Int.t_of_sexp
+module Common = struct
+  module Input = Converters.Int_list
+  module Output = Int
 end
 
 module Part01 = struct
-  include Input
+  include Common
   let part = 1
 
   let solve input =
@@ -18,7 +17,7 @@ module Part01 = struct
 end
 
 module Part02 = struct
-  include Input
+  include Common
   let part = 2
 
   let solve input =

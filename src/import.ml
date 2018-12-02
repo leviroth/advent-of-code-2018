@@ -1,11 +1,21 @@
 open! Core
 
+module type Input = sig
+  type t
+  val load : string -> t
+end
+
+module type Output = sig
+  type t
+  val to_string : t -> string
+end
+
 module type Solution = sig
-  type input
+  module Input : Input
+  module Output : Output
 
   val part : int
-  val parse : string -> input
-  val solve : input -> int
+  val solve : Input.t -> Output.t
 end
 
 module type Day = sig
@@ -20,9 +30,10 @@ let make_solve_command day (module S : Solution) =
   ( part_string
   , Command.basic ~summary:(sprintf "part %s solution" part_string) (Command.Param.return (fun () ->
         let input_file = sprintf "./input/day%02d.txt" day in
-        S.parse input_file
+        S.Input.load input_file
         |> S.solve
-        |> printf "%d\n")))
+        |> S.Output.to_string
+        |> printf "%s\n")))
 
 let make_day_command (module D : Day) =
   let date_string = sprintf "%02d" D.date in
