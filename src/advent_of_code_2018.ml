@@ -2,7 +2,9 @@ open! Core
 open! Import
 
 let days : (module Day) list =
-  [ (module Day01) ]
+  [ (module Day01) 
+  ; (module Day02)
+  ]
 
 let command =
   Command.group
