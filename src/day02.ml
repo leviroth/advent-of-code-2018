@@ -7,16 +7,14 @@ module Chars_by_count = struct
   type t = char list Int.Map.t
 
   let create word =
-    let result = Char.Table.create () in
-    String.iter word ~f:(fun c ->
-        Hashtbl.update result c ~f:(function
-            | None -> 1
-            | Some n -> n + 1));
-    Hashtbl.to_alist result
+    String.to_list word
+    |> List.map ~f:(fun x -> x, 1)
+    |> Char.Map.of_alist_reduce ~f:(+)
+    |> Map.to_alist
     |> List.map ~f:Tuple2.swap
     |> Int.Map.of_alist_multi
 
-  let has_count t count =
+  let has_count t ~count =
     Map.find t count
     |> Option.is_some
 end
@@ -28,12 +26,9 @@ module Part01 = struct
   let part = 1
 
   let solve input =
-    List.map input ~f:Chars_by_count.create
-    |> List.fold ~init:(0, 0) ~f:(fun (twos, threes) count ->
-        ( twos   + Bool.to_int (Chars_by_count.has_count count 2)
-        , threes + Bool.to_int (Chars_by_count.has_count count 3)
-        ))
-    |> Tuple2.uncurry ( * )
+    let counts = List.map input ~f:Chars_by_count.create in
+    List.count counts ~f:(Chars_by_count.has_count ~count:2)
+    * List.count counts ~f:(Chars_by_count.has_count ~count:3)
 end
 
 module Part02 = struct
@@ -49,17 +44,20 @@ module Part02 = struct
     |> List.count ~f:(fun (c1, c2) -> not (Char.equal c1 c2))
     |> Int.equal 1
 
-  let solve input =
-    let word_a, word_b =
-      List.cartesian_product input input
-      |> List.find_exn ~f:is_correct
-    in
+  let common_letters word_a word_b =
     String.to_list word_a
     |> List.filter_mapi ~f:(fun i c ->
         match Char.equal c word_b.[i] with
         | true -> Some c
         | false -> None)
     |> String.of_char_list
+
+  let solve input =
+    let word_a, word_b =
+      List.cartesian_product input input
+      |> List.find_exn ~f:is_correct
+    in
+    common_letters word_a word_b
 end
 
 let parts : (module Solution) list =
