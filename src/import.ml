@@ -2,6 +2,7 @@ open! Core
 
 module type Input = sig
   type t
+  val of_string : string -> t
   val load : string -> t
 end
 
@@ -25,15 +26,25 @@ end
 
 let pad_int = sprintf "%02d"
 
+let solve_and_print (type a) (module S : Solution with type Input.t = a) (input : a) =
+  S.solve input
+  |> S.Output.to_string
+  |> printf "%s\n"
+
+let test_and_print (module S : Solution) input_string =
+  S.Input.of_string input_string
+  |> solve_and_print (module S)
+
+let solve_input day (module S : Solution) =
+  let input_file = sprintf "../input/day%02d.txt" day in
+  S.Input.load input_file
+  |> solve_and_print (module S)
+
 let make_solve_command day (module S : Solution) =
   let part_string = pad_int S.part in
   ( part_string
-  , Command.basic ~summary:(sprintf "part %s solution" part_string) (Command.Param.return (fun () ->
-        let input_file = sprintf "./input/day%02d.txt" day in
-        S.Input.load input_file
-        |> S.solve
-        |> S.Output.to_string
-        |> printf "%s\n")))
+  , Command.basic ~summary:(sprintf "part %s solution" part_string)
+      (Command.Param.return (fun () -> solve_input day (module S))))
 
 let make_day_command (module D : Day) =
   let date_string = sprintf "%02d" D.date in

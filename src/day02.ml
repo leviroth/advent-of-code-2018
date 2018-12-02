@@ -64,3 +64,9 @@ let parts : (module Solution) list =
   [ (module Part01)
   ; (module Part02)
   ]
+
+let%expect_test _ =
+  List.iter parts ~f:(solve_input date);
+  [%expect{|
+    7105
+    omlvgdokxfncvqyersasjziup |}]
