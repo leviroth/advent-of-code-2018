@@ -10,6 +10,7 @@ end
 
 module Part01 = struct
   include Common
+
   let part = 1
 
   let solve input =
@@ -18,6 +19,7 @@ end
 
 module Part02 = struct
   include Common
+
   let part = 2
 
   let solve input =

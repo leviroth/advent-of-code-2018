@@ -13,7 +13,7 @@ module Chars_by_count = struct
             | None -> 1
             | Some n -> n + 1));
     Hashtbl.to_alist result
-    |> List.map ~f:(Tuple2.swap)
+    |> List.map ~f:Tuple2.swap
     |> Int.Map.of_alist_multi
 
   let has_count t count =
@@ -24,6 +24,7 @@ end
 module Part01 = struct
   module Input = Converters.String_list
   module Output = Int
+
   let part = 1
 
   let solve input =
@@ -38,6 +39,7 @@ end
 module Part02 = struct
   module Input = Converters.String_list
   module Output = String
+
   let part = 2
 
   let is_correct (a, b) =
