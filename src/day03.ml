@@ -42,7 +42,6 @@ module Claim = struct
          { left_offset; top_offset; width; height })
       (row_number *> string " @ " *> coordinates)
       (string ": " *> dimensions <* char '\n')
-
 end
 
 module Int_pair = struct
@@ -72,7 +71,7 @@ module Common = struct
 
   module Output = Int
 
-  let get_counts input = 
+  let get_counts input =
     List.concat_map input ~f:Claim.contents
     |> List.map ~f:(fun x -> x, 1)
     |> Int_pair.Map.of_alist_reduce ~f:(+)
