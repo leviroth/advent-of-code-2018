@@ -43,7 +43,7 @@ let parts : (module Solution) list =
   ]
 
 let%expect_test _ =
-  List.iter parts ~f:(solve_input date);
+  List.iter parts ~f:(test_input date);
   [%expect{|
     543
     621 |}]

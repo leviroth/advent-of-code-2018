@@ -1,5 +1,5 @@
 (library
  (name advent_of_code_2018)
- (libraries core)
+ (libraries angstrom angstrom-unix core)
  (inline_tests (deps (glob_files ../input/*.txt)))
  (preprocess (pps ppx_jane)))

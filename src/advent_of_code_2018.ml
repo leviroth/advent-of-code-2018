@@ -4,6 +4,7 @@ open! Import
 let days : (module Day) list =
   [ (module Day01)
   ; (module Day02)
+  ; (module Day03)
   ]
 
 let command =

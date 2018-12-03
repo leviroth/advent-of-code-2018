@@ -35,8 +35,13 @@ let test_and_print (module S : Solution) input_string =
   S.Input.of_string input_string
   |> solve_and_print (module S)
 
-let solve_input day (module S : Solution) =
+let test_input day (module S : Solution) =
   let input_file = sprintf "../input/day%02d.txt" day in
+  S.Input.load input_file
+  |> solve_and_print (module S)
+
+let solve_input day (module S : Solution) =
+  let input_file = sprintf "./input/day%02d.txt" day in
   S.Input.load input_file
   |> solve_and_print (module S)
 
