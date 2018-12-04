@@ -4,18 +4,14 @@ open! Import
 let date = 3
 
 module Claim = struct
-  module T = struct
-    type t =
-      { left_offset : int
-      ; top_offset : int
-      ; width : int
-      ; height : int
-      }
-    [@@deriving compare, sexp]
-  end
-
-  include T
-  include Comparable.Make (T)
+  type t =
+    { id : int
+    ; left_offset : int
+    ; top_offset : int
+    ; width : int
+    ; height : int
+    }
+  [@@deriving fields]
 
   let contents t =
     let open List.Let_syntax in
@@ -28,7 +24,7 @@ module Claim = struct
     let integer =
       take_while1 (function '0' .. '9' -> true | _ -> false) >>| int_of_string
     in
-    let row_number =
+    let id =
       char '#' *> integer
     in
     let coordinates =
@@ -37,10 +33,11 @@ module Claim = struct
     let dimensions =
       lift2 Tuple2.create integer (char 'x' *> integer)
     in
-    lift2
-      (fun (left_offset, top_offset) (width, height) ->
-         { left_offset; top_offset; width; height })
-      (row_number *> string " @ " *> coordinates)
+    lift3
+      (fun id (left_offset, top_offset) (width, height) ->
+         { id; left_offset; top_offset; width; height })
+      id
+      (string " @ " *> coordinates)
       (string ": " *> dimensions <* char '\n')
 end
 
@@ -71,12 +68,12 @@ module Common = struct
 
   module Output = Int
 
-  let get_counts input =
-    List.concat_map input ~f:Claim.contents
-    |> List.map ~f:(fun x -> x, 1)
-    |> Int_pair.Map.of_alist_reduce ~f:(+)
 end
 
+let get_counts input =
+  List.concat_map input ~f:Claim.contents
+  |> List.map ~f:(fun x -> x, 1)
+  |> Int_pair.Map.of_alist_reduce ~f:(+)
 
 module Part01 = struct
   include Common
@@ -94,12 +91,10 @@ module Part02 = struct
 
   let solve input =
     let counts = get_counts input in
-    List.findi input ~f:(fun _ claim ->
+    List.find_exn input ~f:(fun claim ->
         Claim.contents claim
         |> List.for_all ~f:(fun x -> Map.find_exn counts x = 1))
-    |> Option.value_exn
-    |> fst
-    |> Int.succ
+    |> Claim.id
 end
 
 let parts : (module Solution) list =
