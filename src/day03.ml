@@ -67,7 +67,6 @@ module Common = struct
   end
 
   module Output = Int
-
 end
 
 let get_counts input =
