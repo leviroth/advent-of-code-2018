@@ -1,4 +1,5 @@
 include (Core : module type of Core with module Option := Core.Option)
+include Int.Replace_polymorphic_compare
 
 module Option = struct
   include Core.Option

@@ -20,3 +20,12 @@ module String_list = struct
   let load file =
     Sexp.load_sexps_conv_exn file String.t_of_sexp
 end
+
+module String = struct
+  type t = string
+
+  let of_string s = s
+
+  let load file =
+    Sexp.load_sexp_conv_exn file String.t_of_sexp
+end
