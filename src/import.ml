@@ -1,4 +1,11 @@
-open! Core
+include (Core : module type of Core with module Option := Core.Option)
+
+module Option = struct
+  include Core.Option
+  let value_exn t = Core.Option.value_exn ?here:None ?message:None ?error:None t
+end
+
+module Int_pair = Tuple.Comparable (Int) (Int)
 
 module type Input = sig
   type t
@@ -10,6 +17,28 @@ module type Output = sig
   type t
   val to_string : t -> string
 end
+
+module Make_parseable (T : sig
+    type t
+    val parser : t Angstrom.t
+  end)
+  : Input with type t = T.t list
+= struct
+  type t = T.t list
+
+  let parser = Angstrom.many T.parser
+
+    let of_string s =
+      Angstrom.parse_string parser s
+      |> Result.ok_or_failwith
+
+    let load file =
+      In_channel.with_file file ~f:(fun in_channel ->
+          Angstrom_unix.parse parser in_channel
+          |> snd
+          |> Result.ok_or_failwith)
+  end
+
 
 module type Solution = sig
   module Input : Input

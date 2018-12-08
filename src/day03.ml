@@ -41,31 +41,8 @@ module Claim = struct
       (string ": " *> dimensions <* char '\n')
 end
 
-module Int_pair = struct
-  module T = struct
-    type t = int * int [@@deriving compare, sexp]
-  end
-  include T
-  include Comparable.Make (T)
-end
-
 module Common = struct
-  module Input = struct
-    type t = Claim.t list
-
-    let parser = Angstrom.many Claim.parser
-
-    let of_string s =
-      Angstrom.parse_string parser s
-      |> Result.ok_or_failwith
-
-    let load file =
-      In_channel.with_file file ~f:(fun in_channel ->
-          Angstrom_unix.parse parser in_channel
-          |> snd
-          |> Result.ok_or_failwith)
-  end
-
+  module Input = Make_parseable (Claim)
   module Output = Int
 end
 

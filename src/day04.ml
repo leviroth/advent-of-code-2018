@@ -1,9 +1,6 @@
-open! Core
 open! Import
 
 let date = 4
-
-let my_value_exn t = Option.value_exn ?here:None ?message:None ?error:None t
 
 module What_happened = struct
   type t =
@@ -92,24 +89,8 @@ module Event = struct
 end
 
 module Common = struct
-  module Input = struct
-    type t = Event.t list
-
-    let parser = Angstrom.many Event.parser
-
-    let of_string s =
-      Angstrom.parse_string parser s
-      |> Result.ok_or_failwith
-
-    let load file =
-      In_channel.with_file file ~f:(fun in_channel ->
-          Angstrom_unix.parse parser in_channel
-          |> snd
-          |> Result.ok_or_failwith)
-  end
-
+  module Input = Make_parseable (Event)
   module Output = Int
-  (* module Output = struct type t = (int * (Time.t * Time.t)) list let to_string t = sprintf !"%{sexp:(int * (Time.t * Time.t)) list}" t end *)
 end
 
 let get_intervals_by_guards input =
@@ -118,23 +99,23 @@ let get_intervals_by_guards input =
   in
   Event.to_intervals sorted_input
 
+let coverage_by_minute spans =
+  let map =
+    List.range 0 60
+    |> List.map ~f:(fun x -> x, 0)
+    |> Int.Map.of_alist_exn
+  in
+  List.fold spans ~init:map ~f:(fun map (start, stop) ->
+      List.range start stop
+      |> List.fold ~init:map ~f:(Map.update ~f:(function
+          | None -> assert false
+          | Some n -> n + 1)))
+
 module Part01 = struct
   include Common
   let part = 1
 
   let score_interval (start, stop) = stop - start
-
-  let coverage_by_minute spans =
-    let map =
-      List.range 0 60
-      |> List.map ~f:(fun x -> x, 0)
-      |> Int.Map.of_alist_exn
-    in
-    List.fold spans ~init:map ~f:(fun map (start, stop) ->
-        List.range start stop
-        |> List.fold ~init:map ~f:(Map.update ~f:(function
-            | None -> assert false
-            | Some n -> Int.succ n)))
 
   let solve input =
     let intervals_by_guards =
@@ -148,15 +129,14 @@ module Part01 = struct
         ~compare:(
           Comparable.lift Int.compare
             ~f:(fun (_, spans) ->
-                List.fold spans ~init:0 ~f:(fun total interval ->
-                    total + score_interval interval)))
-      |> my_value_exn
+                List.sum (module Int) spans ~f:score_interval))
+      |> Option.value_exn
     in
     let minute, _ =
       coverage_by_minute intervals
       |> Int.Map.to_alist
       |> List.max_elt ~compare:(Comparable.lift Int.compare ~f:snd)
-      |> my_value_exn
+      |> Option.value_exn
     in
     guard * minute
 
@@ -165,28 +145,6 @@ end
 module Part02 = struct
   include Common
   let part = 2
-
-  let score_interval (start, stop) = stop - start
-
-  let coverage_by_minute spans =
-    let map =
-      List.range 0 60
-      |> List.map ~f:(fun x -> x, 0)
-      |> Int.Map.of_alist_exn
-    in
-    List.fold spans ~init:map ~f:(fun map (start, stop) ->
-        List.range start stop
-        |> List.fold ~init:map ~f:(Map.update ~f:(function
-            | None -> assert false
-            | Some n -> Int.succ n)))
-
-  module Int_pair = struct
-    module T = struct
-      type t = int * int [@@deriving compare, sexp]
-    end
-    include T
-    include Comparable.Make (T)
-  end
 
   let solve input =
     let intervals_by_guards = get_intervals_by_guards input in
@@ -197,7 +155,7 @@ module Part02 = struct
               Int_pair.Map.update map (guard, minute) ~f:(Option.value_map ~default:1 ~f:Int.succ)))
       |> Int_pair.Map.to_alist
       |> List.max_elt ~compare:(Comparable.lift Int.compare ~f:snd)
-      |> my_value_exn
+      |> Option.value_exn
       |> fst
     in
     guard * minute
