@@ -61,7 +61,7 @@ let solve_and_print (type a) (module S : Solution with type Input.t = a) (input 
   |> S.Output.to_string
   |> printf "%s\n"
 
-let test_and_print (module S : Solution) input_string =
+let test_and_print input_string (module S : Solution) =
   S.Input.of_string input_string
   |> solve_and_print (module S)
 

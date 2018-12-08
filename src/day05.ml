@@ -65,6 +65,7 @@ module Part02 = struct
     |> List.map ~f:Part01.solve
     |> List.min_elt ~compare
     |> Option.value_exn
+
 end
 
 let parts : (module Solution) list =
@@ -73,7 +74,7 @@ let parts : (module Solution) list =
   ]
 
 let%expect_test _ =
-  List.iter parts ~f:(test_input date);
+  List.iter parts ~f:(test_and_print "dabAcCaCBAcCcaDA");
   [%expect{|
-    11118
-    6948 |}]
+    10
+    4 |}]
