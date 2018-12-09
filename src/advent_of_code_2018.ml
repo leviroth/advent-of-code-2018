@@ -7,6 +7,7 @@ let days : (module Day) list =
   ; (module Day03)
   ; (module Day04)
   ; (module Day05)
+  ; (module Day06)
   ]
 
 let command =

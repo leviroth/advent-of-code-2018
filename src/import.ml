@@ -6,7 +6,10 @@ module Option = struct
   let value_exn t = Core.Option.value_exn ?here:None ?message:None ?error:None t
 end
 
-module Int_pair = Tuple.Comparable (Int) (Int)
+module Int_pair = struct
+  include Tuple.Make (Int) (Int)
+  include Tuple.Comparable (Int) (Int)
+end
 
 module type Input = sig
   type t
@@ -70,6 +73,11 @@ let test_input day (module S : Solution) =
   S.Input.load input_file
   |> solve_and_print (module S)
 
+let solve_test_input day (module S : Solution) =
+  let input_file = sprintf "./test_input/day%02d.txt" day in
+  S.Input.load input_file
+  |> solve_and_print (module S)
+
 let solve_input day (module S : Solution) =
   let input_file = sprintf "./input/day%02d.txt" day in
   S.Input.load input_file
@@ -79,7 +87,13 @@ let make_solve_command day (module S : Solution) =
   let part_string = pad_int S.part in
   ( part_string
   , Command.basic ~summary:(sprintf "part %s solution" part_string)
-      (Command.Param.return (fun () -> solve_input day (module S))))
+      (let open Command.Let_syntax in
+       let%map_open test = flag "-test" no_arg ~doc:" Use test input "
+       in
+       (fun () ->
+          match test with
+          | false -> solve_input day (module S)
+          | true -> solve_test_input day (module S))))
 
 let make_day_command (module D : Day) =
   let date_string = sprintf "%02d" D.date in
