@@ -13,22 +13,22 @@ module Dependency = struct
       (string " must be finished before step " *> any_char <* string " can begin.\n")
 end
 
+let downward_graph input =
+  let dependencies =
+    List.map input ~f:(fun (_, x) -> x, [])
+    |> Char.Map.of_alist_reduce ~f:(fun _ _ -> [])
+  in
+  List.fold
+    input
+    ~init:dependencies
+    ~f:(fun map (key, data) -> Map.add_multi map ~key ~data)
+  |> Map.map ~f:Char.Set.of_list
+
 module Part01 = struct
   module Input = Make_parseable (Dependency)
   module Output = String
 
   let part = 1
-
-  let downward_graph input =
-    let dependencies =
-      List.map input ~f:(fun (_, x) -> x, [])
-      |> Char.Map.of_alist_reduce ~f:(fun _ _ -> [])
-    in
-    List.fold
-      input
-      ~init:dependencies
-      ~f:(fun map (key, data) -> Map.add_multi map ~key ~data)
-    |> Map.map ~f:Char.Set.of_list
 
   let step downward_graph =
     let root_map = Map.filter downward_graph ~f:Set.is_empty in
@@ -64,17 +64,6 @@ module Part02 = struct
 
   let required_time c =
     61 + (Char.to_int c) - (Char.to_int 'A')
-
-  let downward_graph input =
-    let dependencies =
-      List.map input ~f:(fun (_, x) -> x, [])
-      |> Char.Map.of_alist_reduce ~f:(fun _ _ -> [])
-    in
-    List.fold
-      input
-      ~init:dependencies
-      ~f:(fun map (key, data) -> Map.add_multi map ~key ~data)
-    |> Map.map ~f:(fun l -> Char.Set.of_list l)
 
   let set_diff_list set list =
     List.fold list ~init:set ~f:Set.remove
