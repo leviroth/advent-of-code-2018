@@ -134,11 +134,7 @@ module Part02 = struct
   let solve input =
     let job_heap = Fheap.create ~cmp:[%compare: int * char] in
     let ready_heap = Fheap.create ~cmp:Char.compare in
-    let ready_jobs, starting_graph = remove_dependencies [] (downward_graph input) in
-    let ready = List.fold ready_jobs ~init:ready_heap ~f:Fheap.add in
-    let in_progress, ready = start_jobs 0 job_heap ready in
-    let new_time = fst (Fheap.top_exn in_progress) in
-    step new_time in_progress ready starting_graph
+    step 0 job_heap ready_heap (downward_graph input)
 
 end
 
