@@ -2,24 +2,24 @@ open! Import
 
 let date = 6
 
-module Coordinate = struct
-  include Int_pair
-
-  let integer =
-    let open Angstrom in
-    take_while1 (function '0' .. '9' -> true | _ -> false) >>| int_of_string
-
-  let parser =
-    let open Angstrom in
-    lift2
-      Tuple2.create
-      integer
-      (char ',' *> skip_while Char.is_whitespace *> integer <* char '\n')
-
-end
+module Coordinate = Int_pair
 
 module Common = struct
-  module Input = Make_parseable (Coordinate)
+  module Input = Make_parseable (struct
+      type t = Int_pair.t
+
+      let integer =
+        let open Angstrom in
+        take_while1 (function '0' .. '9' -> true | _ -> false) >>| int_of_string
+
+      let parser =
+        let open Angstrom in
+        lift2
+          Tuple2.create
+          integer
+          (char ',' *> skip_while Char.is_whitespace *> integer <* char '\n')
+    end)
+
   module Output = Int
 end
 
@@ -90,10 +90,10 @@ module Part01 = struct
       |> Coordinate.Set.of_list
     in
     Map.filter_map closest_map ~f:(
-          Option.value_map ~default:None ~f:(fun closest ->
-              match not (Set.mem infinites closest) with
-              | true -> Some closest
-              | false -> None))
+      Option.value_map ~default:None ~f:(fun closest ->
+          match not (Set.mem infinites closest) with
+          | true -> Some closest
+          | false -> None))
     |> Map.to_alist
     |> List.map ~f:Tuple2.swap
     |> Coordinate.Map.of_alist_multi
@@ -128,7 +128,7 @@ let parts : (module Solution) list =
 
 let%expect_test _ =
   List.iter parts ~f:(test_and_print
-{|1, 1
+                        {|1, 1
 1, 6
 8, 3
 3, 4

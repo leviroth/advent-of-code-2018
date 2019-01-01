@@ -26,17 +26,15 @@ module Make_parseable_single (T : sig
     type t
     val parser : t Angstrom.t
   end)
-  : Input with type t = T.t
+  : Input with type t := T.t
 = struct
-  include T
-
   let of_string s =
-    Angstrom.parse_string parser s
+    Angstrom.parse_string T.parser s
     |> Result.ok_or_failwith
 
   let load file =
     In_channel.with_file file ~f:(fun in_channel ->
-        Angstrom_unix.parse parser in_channel
+        Angstrom_unix.parse T.parser in_channel
         |> snd
         |> Result.ok_or_failwith)
 end
@@ -46,22 +44,14 @@ module Make_parseable (T : sig
     val parser : t Angstrom.t
   end)
   : Input with type t = T.t list
-= struct
+=
+struct
   type t = T.t list
-
-  let parser = Angstrom.many T.parser
-
-  let of_string s =
-    Angstrom.parse_string parser s
-    |> Result.ok_or_failwith
-
-  let load file =
-    In_channel.with_file file ~f:(fun in_channel ->
-        Angstrom_unix.parse parser in_channel
-        |> snd
-        |> Result.ok_or_failwith)
+  include Make_parseable_single (struct
+      type t = T.t list
+      let parser = Angstrom.many T.parser
+    end)
 end
-
 
 module type Solution = sig
   module Input : Input
