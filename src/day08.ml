@@ -8,28 +8,29 @@ module Node = struct
     ; children : t list
     }
 
-  include Make_parseable_single (struct
-      type nonrec t = t
-      let integer =
-        let open Angstrom in
-        take_while1 (function '0' .. '9' -> true | _ -> false) >>| int_of_string
+  let integer =
+    let open Angstrom in
+    take_while1 (function '0' .. '9' -> true | _ -> false) >>| int_of_string
 
-      let parser =
-        let open Angstrom in
-        fix (fun p ->
-            integer <* char ' ' >>= fun child_count ->
-            integer <* char ' ' >>= fun metadata_count ->
-            count child_count p >>= fun children ->
-            count
-              metadata_count
-              (integer <* (skip Char.is_whitespace <|> end_of_input)) >>= fun metadata ->
-            return { metadata; children })
-    end)
+  let parser =
+    let open Angstrom in
+    fix (fun p ->
+        integer <* char ' ' >>= fun child_count ->
+        integer <* char ' ' >>= fun metadata_count ->
+        count child_count p >>= fun children ->
+        count
+          metadata_count
+          (integer <* (skip Char.is_whitespace <|> end_of_input)) >>= fun metadata ->
+        return { metadata; children })
+end
+
+module Common = struct
+  module Input = Make_parseable_single (Node)
+  module Output = Int
 end
 
 module Part01 = struct
-  module Input = Node
-  module Output = Int
+  include Common
 
   let part = 1
 
@@ -40,8 +41,7 @@ module Part01 = struct
 end
 
 module Part02 = struct
-  module Input = Node
-  module Output = Int
+  include Common
 
   let part = 2
 

@@ -26,8 +26,10 @@ module Make_parseable_single (T : sig
     type t
     val parser : t Angstrom.t
   end)
-  : Input with type t := T.t
+  : Input with type t = T.t
 = struct
+  type t = T.t
+
   let of_string s =
     Angstrom.parse_string T.parser s
     |> Result.ok_or_failwith
@@ -46,7 +48,6 @@ module Make_parseable (T : sig
   : Input with type t = T.t list
 =
 struct
-  type t = T.t list
   include Make_parseable_single (struct
       type t = T.t list
       let parser = Angstrom.many T.parser

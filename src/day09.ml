@@ -9,20 +9,16 @@ module Game_params = struct
     }
   [@@deriving fields]
 
-  include Make_parseable_single (struct
-      type nonrec t = t
+  let integer =
+    let open Angstrom in
+    take_while1 (function '0' .. '9' -> true | _ -> false) >>| int_of_string
 
-      let integer =
-        let open Angstrom in
-        take_while1 (function '0' .. '9' -> true | _ -> false) >>| int_of_string
-
-      let parser =
-        let open Angstrom in
-        lift2
-          (fun players marbles -> { players; marbles })
-          (integer <* string " players; ")
-          (string "last marble is worth " *> integer <* string " points")
-    end)
+  let parser =
+    let open Angstrom in
+    lift2
+      (fun players marbles -> { players; marbles })
+      (integer <* string " players; ")
+      (string "last marble is worth " *> integer <* string " points")
 end
 
 module Game_state : sig
@@ -87,27 +83,29 @@ end = struct
 
 end
 
-module Part01 = struct
-  module Input = Game_params
+module Common = struct
+  module Input = Make_parseable_single (Game_params)
   module Output = Int
+end
+
+module Part01 = struct
+  include Common
 
   let part = 1
 
   let solve input =
     Game_state.create input
-  |> Game_state.play
+    |> Game_state.play
 end
 
 module Part02 = struct
-  module Input = Game_params
-  module Output = Int
+  include Common
 
   let part = 2
 
   let solve (input : Game_params.t) =
     let game_params = { input with marbles = input.marbles * 100 } in
-    Game_state.create game_params
-    |> Game_state.play
+    Part01.solve game_params
 end
 
 let parts : (module Solution) list =

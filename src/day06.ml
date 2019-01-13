@@ -2,24 +2,24 @@ open! Import
 
 let date = 6
 
-module Coordinate = Int_pair
+module Coordinate = struct
+  include Int_pair
+
+  let integer =
+    let open Angstrom in
+    take_while1 (function '0' .. '9' -> true | _ -> false) >>| int_of_string
+
+  let parser =
+    let open Angstrom in
+    lift2
+      Tuple2.create
+      integer
+      (char ',' *> skip_while Char.is_whitespace *> integer <* char '\n')
+
+end
 
 module Common = struct
-  module Input = Make_parseable (struct
-      type t = Int_pair.t
-
-      let integer =
-        let open Angstrom in
-        take_while1 (function '0' .. '9' -> true | _ -> false) >>| int_of_string
-
-      let parser =
-        let open Angstrom in
-        lift2
-          Tuple2.create
-          integer
-          (char ',' *> skip_while Char.is_whitespace *> integer <* char '\n')
-    end)
-
+  module Input = Make_parseable (Coordinate)
   module Output = Int
 end
 
