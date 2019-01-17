@@ -68,13 +68,7 @@ module Part02 = struct
 
 end
 
-let parts : (module Solution) list =
+let parts : (module Solution.Part.Basic) list =
   [ (module Part01)
   ; (module Part02)
   ]
-
-let%expect_test _ =
-  List.iter parts ~f:(test_and_print "dabAcCaCBAcCcaDA");
-  [%expect{|
-    10
-    4 |}]

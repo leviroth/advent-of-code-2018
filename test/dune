@@ -1,0 +1,5 @@
+(library
+ (name advent_of_code_2018_test)
+ (libraries advent_of_code_2018 core)
+ (inline_tests)
+ (preprocess (pps ppx_jane)))

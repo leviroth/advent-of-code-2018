@@ -84,7 +84,7 @@ end = struct
 end
 
 module Common = struct
-  module Input = Make_parseable_single (Game_params)
+  module Input = Input.Make_parseable (Game_params)
   module Output = Int
 end
 
@@ -108,26 +108,7 @@ module Part02 = struct
     Part01.solve game_params
 end
 
-let parts : (module Solution) list =
+let parts : (module Solution.Part.Basic) list =
   [ (module Part01)
   ; (module Part02)
   ]
-
-let%expect_test _ =
-  let test_cases =
-    [ "9 players; last marble is worth 25 points"
-    ; "10 players; last marble is worth 1618 points"
-    ; "13 players; last marble is worth 7999 points"
-    ; "17 players; last marble is worth 1104 points"
-    ; "21 players; last marble is worth 6111 points"
-    ; "30 players; last marble is worth 5807 points"
-    ]
-  in
-  List.iter test_cases ~f:(fun test_case -> test_and_print test_case (module Part01));
-  [%expect{|
-    32
-    8317
-    146373
-    2764
-    54718
-    37305 |}]

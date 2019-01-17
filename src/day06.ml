@@ -19,7 +19,7 @@ module Coordinate = struct
 end
 
 module Common = struct
-  module Input = Make_parseable (Coordinate)
+  module Input = Input.Make_parseable_many (Coordinate)
   module Output = Int
 end
 
@@ -121,20 +121,7 @@ module Part02 = struct
         List.sum (module Int) input ~f:(distance coordinate) < 10000)
 end
 
-let parts : (module Solution) list =
+let parts : (module Solution.Part.Basic) list =
   [ (module Part01)
   ; (module Part02)
   ]
-
-let%expect_test _ =
-  List.iter parts ~f:(test_and_print
-                        {|1, 1
-1, 6
-8, 3
-3, 4
-5, 5
-8, 9
-|});
-  [%expect{|
-    17
-    72 |}]

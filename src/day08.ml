@@ -25,7 +25,7 @@ module Node = struct
 end
 
 module Common = struct
-  module Input = Make_parseable_single (Node)
+  module Input = Input.Make_parseable (Node)
   module Output = Int
 end
 
@@ -69,13 +69,7 @@ module Part02 = struct
 
 end
 
-let parts : (module Solution) list =
+let parts : (module Solution.Part.Basic) list =
   [ (module Part01)
   ; (module Part02)
   ]
-
-let%expect_test _ =
-  List.iter parts ~f:(test_and_print "2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2");
-  [%expect{|
-    138
-    66 |}]

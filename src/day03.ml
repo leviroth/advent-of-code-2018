@@ -42,7 +42,7 @@ module Claim = struct
 end
 
 module Common = struct
-  module Input = Make_parseable (Claim)
+  module Input = Input.Make_parseable_many (Claim)
   module Output = Int
 end
 
@@ -73,13 +73,7 @@ module Part02 = struct
     |> Claim.id
 end
 
-let parts : (module Solution) list =
+let parts : (module Solution.Part.Basic) list =
   [ (module Part01)
   ; (module Part02)
   ]
-
-let%expect_test _ =
-  List.iter parts ~f:(test_input date);
-  [%expect{|
-    101469
-    1067 |}]

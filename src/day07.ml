@@ -25,7 +25,7 @@ let downward_graph input =
   |> Map.map ~f:Char.Set.of_list
 
 module Part01 = struct
-  module Input = Make_parseable (Dependency)
+  module Input = Input.Make_parseable_many (Dependency)
   module Output = String
 
   let part = 1
@@ -57,7 +57,7 @@ module Part01 = struct
 end
 
 module Part02 = struct
-  module Input = Make_parseable (Dependency)
+  module Input = Input.Make_parseable_many (Dependency)
   module Output = Int
 
   let part = 2
@@ -127,21 +127,7 @@ module Part02 = struct
 
 end
 
-let parts : (module Solution) list =
+let parts : (module Solution.Part.Basic) list =
   [ (module Part01)
   ; (module Part02)
   ]
-
-let%expect_test _ =
-  List.iter parts ~f:(test_and_print
-{|Step C must be finished before step A can begin.
-Step C must be finished before step F can begin.
-Step A must be finished before step B can begin.
-Step A must be finished before step D can begin.
-Step B must be finished before step E can begin.
-Step D must be finished before step E can begin.
-Step F must be finished before step E can begin.
-|});
-  [%expect{|
-    CABDFE
-    253 |}]

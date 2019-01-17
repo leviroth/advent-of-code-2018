@@ -60,13 +60,7 @@ module Part02 = struct
     common_letters word_a word_b
 end
 
-let parts : (module Solution) list =
+let parts : (module Solution.Part.Basic) list =
   [ (module Part01)
   ; (module Part02)
   ]
-
-let%expect_test _ =
-  List.iter parts ~f:(test_input date);
-  [%expect{|
-    7105
-    omlvgdokxfncvqyersasjziup |}]
