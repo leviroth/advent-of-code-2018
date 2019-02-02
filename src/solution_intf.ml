@@ -17,17 +17,8 @@ module Part_intf = struct
   module type S = sig
     include Basic
 
-    (* val test_and_print : string -> unit
-     * val solve_and_print : Input.t -> unit
-     * 
-     * val test_input : int -> unit
-     * val solve_test_input : int -> unit
-     * val solve_input : int -> unit *)
-
     val solve_file : string -> string
     val solve_input : string -> string
-
-    (* val command : int -> string * Command.t *)
   end
 
   module type Part = sig
