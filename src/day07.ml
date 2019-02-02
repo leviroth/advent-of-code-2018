@@ -82,10 +82,10 @@ module Part02 = struct
 
   let remove_dependencies finished_jobs graph =
     Map.partition_map graph ~f:(fun dependencies ->
-        let new_dependencies = set_diff_list dependencies finished_jobs in
-        match Set.is_empty new_dependencies with
-        | true -> `Fst ()
-        | false -> `Snd new_dependencies)
+      let new_dependencies = set_diff_list dependencies finished_jobs in
+      match Set.is_empty new_dependencies with
+      | true -> `Fst ()
+      | false -> `Snd new_dependencies)
     |> Tuple2.map_fst ~f:Map.keys
 
   let finished_jobs time in_progress =

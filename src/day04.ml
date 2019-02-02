@@ -106,10 +106,10 @@ let coverage_by_minute spans =
     |> Int.Map.of_alist_exn
   in
   List.fold spans ~init:map ~f:(fun map (start, stop) ->
-      List.range start stop
-      |> List.fold ~init:map ~f:(Map.update ~f:(function
-          | None -> assert false
-          | Some n -> n + 1)))
+    List.range start stop
+    |> List.fold ~init:map ~f:(Map.update ~f:(function
+      | None -> assert false
+      | Some n -> n + 1)))
 
 module Part01 = struct
   include Common
@@ -129,7 +129,7 @@ module Part01 = struct
         ~compare:(
           Comparable.lift Int.compare
             ~f:(fun (_, spans) ->
-                List.sum (module Int) spans ~f:score_interval))
+              List.sum (module Int) spans ~f:score_interval))
       |> Option.value_exn
     in
     let minute, _ =
@@ -150,9 +150,9 @@ module Part02 = struct
     let intervals_by_guards = get_intervals_by_guards input in
     let guard, minute =
       List.fold intervals_by_guards ~init:Int_pair.Map.empty ~f:(fun map (guard, (start, stop)) ->
-          List.range start stop
-          |> List.fold ~init:map ~f:(fun map minute ->
-              Int_pair.Map.update map (guard, minute) ~f:(Option.value_map ~default:1 ~f:Int.succ)))
+        List.range start stop
+        |> List.fold ~init:map ~f:(fun map minute ->
+          Int_pair.Map.update map (guard, minute) ~f:(Option.value_map ~default:1 ~f:Int.succ)))
       |> Int_pair.Map.to_alist
       |> List.max_elt ~compare:(Comparable.lift Int.compare ~f:snd)
       |> Option.value_exn

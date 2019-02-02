@@ -10,7 +10,7 @@ module Part01 = struct
 
   let reactive x y =
     Char.equal (Char.uppercase x) (Char.uppercase y)
-      && not (Bool.equal (Char.is_uppercase x) (Char.is_uppercase y))
+    && not (Bool.equal (Char.is_uppercase x) (Char.is_uppercase y))
 
   let reduce_list list =
     let open Doubly_linked in
@@ -38,8 +38,8 @@ module Part01 = struct
 
   let solve input =
     let list =
-    String.to_list input
-    |> Doubly_linked.of_list
+      String.to_list input
+      |> Doubly_linked.of_list
     in
     reduce_list list;
     Doubly_linked.length list

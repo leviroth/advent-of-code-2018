@@ -68,8 +68,8 @@ module Part02 = struct
   let solve input =
     let counts = get_counts input in
     List.find_exn input ~f:(fun claim ->
-        Claim.contents claim
-        |> List.for_all ~f:(fun x -> Map.find_exn counts x = 1))
+      Claim.contents claim
+      |> List.for_all ~f:(fun x -> Map.find_exn counts x = 1))
     |> Claim.id
 end
 

@@ -28,12 +28,12 @@ module Part02 = struct
       input_cycle
       ~init:(0, Int.Set.empty)
       ~f:(fun (current_frequency, seen_frequencies) change ~k ->
-          match Set.mem seen_frequencies current_frequency with
-          | true -> current_frequency
-          | false ->
-            let next_frequency = current_frequency + change in
-            let next_seen = Set.add seen_frequencies current_frequency in
-            k (next_frequency, next_seen))
+        match Set.mem seen_frequencies current_frequency with
+        | true -> current_frequency
+        | false ->
+          let next_frequency = current_frequency + change in
+          let next_seen = Set.add seen_frequencies current_frequency in
+          k (next_frequency, next_seen))
       ~finish:fst
 end
 

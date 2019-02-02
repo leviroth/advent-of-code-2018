@@ -73,7 +73,7 @@ module Part01 = struct
     in
     let closest_map =
       List.fold all_coordinates ~init:Coordinate.Map.empty ~f:(fun map coordinate ->
-          Map.set map ~key:coordinate ~data:(find_closest coordinate input))
+        Map.set map ~key:coordinate ~data:(find_closest coordinate input))
     in
     let infinites =
       let edges =
@@ -85,15 +85,15 @@ module Part01 = struct
           ]
       in
       List.filter_map edges ~f:(fun coordinate ->
-          Map.find closest_map coordinate
-          |> Option.join)
+        Map.find closest_map coordinate
+        |> Option.join)
       |> Coordinate.Set.of_list
     in
     Map.filter_map closest_map ~f:(
       Option.value_map ~default:None ~f:(fun closest ->
-          match not (Set.mem infinites closest) with
-          | true -> Some closest
-          | false -> None))
+        match not (Set.mem infinites closest) with
+        | true -> Some closest
+        | false -> None))
     |> Map.to_alist
     |> List.map ~f:Tuple2.swap
     |> Coordinate.Map.of_alist_multi
@@ -118,7 +118,7 @@ module Part02 = struct
         (range bounds.top bounds.bottom)
     in
     List.count all_coordinates ~f:(fun coordinate ->
-        List.sum (module Int) input ~f:(distance coordinate) < 10000)
+      List.sum (module Int) input ~f:(distance coordinate) < 10000)
 end
 
 let parts : (module Solution.Part.Basic) list =

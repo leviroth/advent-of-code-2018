@@ -29,5 +29,5 @@ let command =
   Command.group
     ~summary:"Solve a selected puzzle"
     (List.map days ~f:(fun (module Day) ->
-         let name = sprintf "%02d" Day.date in
-         name, Day.command))
+       let name = sprintf "%02d" Day.date in
+       name, Day.command))

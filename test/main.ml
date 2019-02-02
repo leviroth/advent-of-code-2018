@@ -9,8 +9,8 @@ let test_specific_part test_case ~day ~part =
 
 let test_whole_day_on_string (module Day : Solution.Day.S) test_case =
   List.iter Day.parts ~f:(fun (module Part) ->
-      Part.solve_input test_case
-      |> printf "%s\n")
+    Part.solve_input test_case
+    |> printf "%s\n")
 
 let%expect_test "Day 01" =
   let part_1_test_cases =

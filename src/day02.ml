@@ -47,9 +47,9 @@ module Part02 = struct
   let common_letters word_a word_b =
     String.to_list word_a
     |> List.filter_mapi ~f:(fun i c ->
-        match Char.equal c word_b.[i] with
-        | true -> Some c
-        | false -> None)
+      match Char.equal c word_b.[i] with
+      | true -> Some c
+      | false -> None)
     |> String.of_char_list
 
   let solve input =

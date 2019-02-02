@@ -15,13 +15,13 @@ module Node = struct
   let parser =
     let open Angstrom in
     fix (fun p ->
-        integer <* char ' ' >>= fun child_count ->
-        integer <* char ' ' >>= fun metadata_count ->
-        count child_count p >>= fun children ->
-        count
-          metadata_count
-          (integer <* (skip Char.is_whitespace <|> end_of_input)) >>= fun metadata ->
-        return { metadata; children })
+      integer <* char ' ' >>= fun child_count ->
+      integer <* char ' ' >>= fun metadata_count ->
+      count child_count p >>= fun children ->
+      count
+        metadata_count
+        (integer <* (skip Char.is_whitespace <|> end_of_input)) >>= fun metadata ->
+      return { metadata; children })
 end
 
 module Common = struct
@@ -51,21 +51,21 @@ module Part02 = struct
     | _ ->
       let cache = Int.Table.create () in
       List.fold metadata ~init:0 ~f:(fun total one_based_index ->
-          total +
-          match one_based_index with
-          | 0 -> 0
-          | _ ->
-            let zero_based_index = one_based_index - 1 in
-            match Int.Table.find cache zero_based_index with
-            | Some result -> result
-            | None ->
-              let result =
-                List.nth children zero_based_index
-                |> Option.map ~f:solve
-                |> Option.value ~default:0
-              in
-              Int.Table.set cache ~key:zero_based_index ~data:result;
-              result)
+        total +
+        match one_based_index with
+        | 0 -> 0
+        | _ ->
+          let zero_based_index = one_based_index - 1 in
+          match Int.Table.find cache zero_based_index with
+          | Some result -> result
+          | None ->
+            let result =
+              List.nth children zero_based_index
+              |> Option.map ~f:solve
+              |> Option.value ~default:0
+            in
+            Int.Table.set cache ~key:zero_based_index ~data:result;
+            result)
 
 end
 
